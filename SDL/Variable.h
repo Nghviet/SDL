@@ -16,5 +16,6 @@ extern TTF_Font* gFont;
 extern std::vector< std::shared_ptr<Texture> > gTexture;
 extern std::vector<vSDLR> gClip;
 
+extern bool loading;
 
 #endif // !VARIABLE_H_

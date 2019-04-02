@@ -4,7 +4,7 @@
 
 #include <SDL.h>
 #include <string>
-class Texture
+struct Texture
 {
 	public:
 		Texture();
@@ -13,7 +13,7 @@ class Texture
 
 		void free();
 
-		bool load(std::string path);
+		bool load(std::string path);	
 
 		void render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip);
 
