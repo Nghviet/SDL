@@ -60,3 +60,9 @@ void Texture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cent
 	}
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, angle, center, flip);
 }
+
+void drawRect(int x1, int y1, int x2, int y2)
+{
+	SDL_Rect tmp = { x1,y1,x2 - x1,y2 - y1 };
+	SDL_RenderDrawRect(gRenderer, &tmp);
+}

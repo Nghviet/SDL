@@ -1,2 +1,11 @@
-1
-0 Sprite img/back.png 4 20	20
+10
+0	UI_BASE							img/UI/UI_base.png						0 0 0
+1	UI_CONTROL						img/UI/UI_base_control.png				0 0 0
+2	UI_BATTLESHIP_ALLIED			img/UI/UI_Battleship_Allied.png			0 0 0
+3	UI_CRUISER_ALLIED				img/UI/UI_Cruiser_Allied.png			0 0 0
+4	UI_BATTLESHIP_ENEMY				img/UI/UI_Battleship_Enemy.png			0 0 0
+5	UI_CRUISER_ENEMY				img/UI/UI_Cruiser_Enemy.png				0 0 0
+6	UI_BATTLESHIP_DESTROYED			img/UI/UI_Battleship_Destroyed.png		0 0 0
+7	UI_CRUISER_DESTROYED			img/UI/UI_Cruiser_Destroyed.png			0 0 0
+8	UI_CHOOSEN_SHIP					img/UI/UI_choosen_ship.png				0 0 0
+9	UI_MINIMAP						img/UI/UI_Minimap.png					0 0 0

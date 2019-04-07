@@ -1,12 +1,19 @@
-#include"Thread.h"
-#include"Variable.h"
+#include "Thread.h"
+#include "Variable.h"
+#include "Texture.h"
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
+#include <future>
+#include <thread>
+#include <assert.h>
 #include <fstream>
 #include <iostream>
-int loadThread(void *data)
+#include <chrono>
+
+void loadThread()
 {
 	std::cout << "Thread loading" << std::endl;
 	std::ifstream in;
@@ -14,25 +21,28 @@ int loadThread(void *data)
 	if (!in.good())
 	{
 		std::cout << "Load err";
-		loading = false;
-		return 0;
+		in.close();
+		return;
 	}
 	else
 	{
 		int n;
 		in >> n;
+//		std::cout << n << std::endl;
 		while (n--)
 		{
 			// Order of render - name - path - number of frame(1 if static) - width(horizontal)(perframe) - height(vertical)(perframe)
 			int no, f, w, h;
 			std::string name, path;
-			in >> no >> name >> path >> f >> w >> h;
+			in >> no >> name >> path >> f >> w >> h; 
+//			std::cout << no << std::endl;
 			std::shared_ptr<Texture> tmp(new Texture);
 			std::vector<SDL_Rect> t;
 			if (!tmp->load(path.c_str()))
 			{
 				std::cout << SDL_GetError() << std::endl;
-				return 1;
+				in.close();
+				return;
 			}
 			for (int j = 0; j < f; j++)
 			{
@@ -44,7 +54,22 @@ int loadThread(void *data)
 		}
 	}
 	in.close();
-	loading = false;
-	std::cout << "Thread loading complete,sending back"<<loading << std::endl;
-	return 0;
+	std::cout << "Thread loading complete,sending back" << std::endl;
+	signal.set_value();
+	return;
+}
+
+void loadRender()
+{
+	while (fSignal.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
+	{
+		SDL_RenderClear(gRenderer);
+		tmp.render(0, 0, NULL, NULL, NULL, SDL_FLIP_NONE);
+		SDL_RenderPresent(gRenderer);
+		std::cout << "Rendering" << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
+	
+//	while (s.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) std::cout << "Rendering" << std::endl;
+	return;
 }

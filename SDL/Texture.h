@@ -4,7 +4,7 @@
 
 #include <SDL.h>
 #include <string>
-struct Texture
+class Texture
 {
 	public:
 		Texture();
@@ -21,5 +21,7 @@ struct Texture
 		SDL_Texture* mTexture;
 		int width, height;
 };
+
+void drawRect(int x1, int y1, int x2, int y2);
 
 #endif // !TEXTURE_H_

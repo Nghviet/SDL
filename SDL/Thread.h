@@ -2,8 +2,10 @@
 #ifndef THREAD_H_
 #define THREAD_H_
 
-int loadThread(void *data);
+#include<future>
 
-int supervisor(void *data);
+void loadThread();
+
+void loadRender(std::future<void> signal);
 
 #endif // !THREAD_H_

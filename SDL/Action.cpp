@@ -20,7 +20,7 @@ bool init()
 		return false;
 	}
 
-	gWindow = SDL_CreateWindow("Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, SDL_WINDOW_FULLSCREEN);
+	gWindow = SDL_CreateWindow("Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, sWidth, sHeight, SDL_WINDOW_RESIZABLE);
 	if (gWindow == NULL)
 	{
 		std::cout << SDL_GetError() << std::endl;
