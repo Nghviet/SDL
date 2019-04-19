@@ -19,23 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Action.h" />
-    <ClInclude Include="Controller.h" />
-    <ClInclude Include="Ship.h" />
-    <ClInclude Include="Thread.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Variable.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Action.cpp" />
-    <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Thread.cpp" />
-    <ClCompile Include="Variable.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <Text Include="debug.txt" />
     <Text Include="loadImage.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Action.h" />
+    <ClInclude Include="include\Controller.h" />
+    <ClInclude Include="include\Header.h" />
+    <ClInclude Include="include\Ship.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\Thread.h" />
+    <ClInclude Include="include\UI.h" />
+    <ClInclude Include="include\Variable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\Controller.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Thread.cpp" />
+    <ClCompile Include="src\UI.cpp" />
+    <ClCompile Include="src\Variable.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -88,7 +92,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>L:\SDL2_image-2.0.4\include;L:\SDL2_ttf-2.0.15\include;L:\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>L:\SDL2_image-2.0.4\lib;L:\SDL2_ttf-2.0.15\lib;L:\SDL2-2.0.9\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -111,6 +118,10 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_ttf.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

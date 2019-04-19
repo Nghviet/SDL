@@ -1,0 +1,9 @@
+﻿  Controller.cpp
+l:\sdl\sdl\include\variable.h(12): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+l:\sdl\sdl\src\controller.cpp(105): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+l:\sdl\sdl\src\controller.cpp(106): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+l:\sdl\sdl\src\controller.cpp(112): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+l:\sdl\sdl\src\controller.cpp(113): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+l:\sdl\sdl\src\controller.cpp(123): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+l:\sdl\sdl\src\controller.cpp(125): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  SDL.vcxproj -> L:\SDL\Debug\SDL.exe
