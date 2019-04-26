@@ -59,10 +59,23 @@ Ship::Ship(Point _cur, int _width, int _height, double _scale, double _angle, in
 	start = 0;
 	current = 0;
 	velocity = 0;
-	rotation = 10;
+	rotation = 5;
 
 	movex = 0;
 	movey = 0;
+	maxForwardSpeed = 50;
+	maxBackwardSpeed = -5;
+	acceleration = 5;
+}
+
+void Ship::init(int _x, int _y)
+{
+	cur.x = _x;
+	cur.y = _y;
+	movex = 0;
+	movey = 0;
+	velocity = 0;
+	angle = 0;
 	maxForwardSpeed = 50;
 	maxBackwardSpeed = -5;
 	acceleration = 5;
@@ -150,7 +163,7 @@ void Ship::move()
 
 	cur.x += distance * cos(angle*M_PI / 180);
 	cur.y += distance * sin(angle*M_PI / 180);
-	if(distance) angle += movey * rotation * time;
+	if (distance) angle += movey * rotation * time * (float)velocity / maxForwardSpeed;
 
 //	std::cout << cur.x << " " << cur.y << std::endl;
 
@@ -176,51 +189,30 @@ Mouse::Mouse()
 void Mouse::update()
 {
 	Uint32 mouseState = SDL_GetMouseState(&xt, &yt);
-	if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT) && 
-		(x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0)  )
-	{
-		if (mode == POINT)
-		{
-			if (x1 != xt || y1 != yt)
-			{
-				x2 = xt;
-				y2 = yt;
-				mode = GROUP;
-			}
-			else
-			{
-				mode = POINT;
-				x1 = xt;
-				y1 = yt;
-				x2 = xt;
-				y2 = yt;
-			}
-		}
-		else
-		{
-			x2 = xt;
-			y2 = yt;
-		}
-	}
-	else
-	{
-		mode = POINT;
-		x1 = xt;
-		y1 = yt;
-		x2 = xt;
-		y2 = yt;
-	}
+	if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) leftclick = true;
+	else leftclick = false;
 
-	if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT))
-	{
+	if (mouseState&SDL_BUTTON(SDL_BUTTON_RIGHT)) rightclick = true;
+	else rightclick = false;
+	
+	mousePos = Point(xt, yt);
 
-	}
 	return;
 }
 
 Point Mouse::getLocation()
 {
 	return Point(xt, yt);
+}
+
+bool Mouse::leftClick()
+{
+	return leftclick;
+}
+
+bool Mouse::rightClick()
+{
+	return rightclick;
 }
 
 void Mouse::render()

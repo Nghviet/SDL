@@ -3,6 +3,7 @@
 
 #include<SDL.h>
 #include<math.h>
+#include<vector>
 
 struct Point
 {
@@ -35,6 +36,8 @@ struct Ship
 			 int _width, int _height,
 			 double _scale, double _angle, int _branch);
 	
+	void init(int _x, int _y);
+
 	void setDestination(Point _des);
 
 	//Debug only
@@ -59,20 +62,43 @@ class Mouse
 
 		Point getLocation();
 
+		bool leftClick();
+
+		bool rightClick();
+
 		void render();
 
 	private:
 		const int POINT = 1;
 		const int GROUP = 2;
+
+		bool leftclick, rightclick;
 		int x1, y1 ;  
 		int x2, y2 ;  
 		int xt, yt;  
 		int mode;
 };
 
-class Keybroad
+class Terrain
 {
+public:
 
+private:
+	std::vector<Point> border;
+};
+
+class Map
+{
+public:
+
+	Map();
+
+	void load();
+
+private:
+//	std::vector<Point> start;
+//	std::string name;
+//	Texture* link;
 };
 
 #endif // !CONTROLLER_H_

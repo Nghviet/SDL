@@ -18,10 +18,13 @@ Texture::~Texture()
 
 void Texture::free()
 {
-	SDL_DestroyTexture(mTexture);
-	mTexture = NULL;
-	width = 0;
-	height = 0;
+	if (mTexture != NULL)
+	{
+		SDL_DestroyTexture(mTexture);
+		mTexture = NULL;
+		width = 0;
+		height = 0;
+	}
 }
 
 bool Texture::load(std::string path)
@@ -69,6 +72,70 @@ void Texture::render(int x, int y, SDL_Rect* clip, double scale, double angle, S
 
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, angle, center, flip);
 
+}
+
+TextBox::TextBox()
+{
+	mTexture = NULL;
+	width = 0;
+	height = 0;
+}
+
+TextBox::~TextBox()
+{
+	free();
+}
+
+void TextBox::free()
+{
+	if (mTexture != NULL)
+	{
+		SDL_DestroyTexture(mTexture);
+		mTexture = NULL;
+		width = 0;
+		height = 0;
+	}
+}
+
+bool TextBox::load(std::string text,SDL_Color color)
+{
+	free();
+	SDL_Surface* surface = TTF_RenderText_Solid(gFont, text.c_str(), color);
+	if (surface == NULL)
+	{
+		std::cout << TTF_GetError() << std::endl;
+		return false;
+	}
+	mTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
+	if (mTexture == NULL)
+	{
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
+	width = surface->w;
+	height = surface->h;
+	SDL_FreeSurface(surface);
+	return true;
+}
+
+void TextBox::render(int x,int y,SDL_Rect*clip, double scale)
+{
+	SDL_Rect render = { x,y,0,0 };
+	if (clip == NULL)
+	{
+		render.w = width * scale;
+		render.h = height * scale;
+	}
+	else
+	{
+		render.w = clip->w * scale;
+		render.h = clip->h * scale;
+	}
+
+	render.x -= render.w / 2;
+	render.y -= render.h / 2;
+
+	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, 0, NULL, SDL_FLIP_NONE);
 }
 
 void drawRect(int x1, int y1, int x2, int y2)

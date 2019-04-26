@@ -12,6 +12,7 @@
   <ItemGroup>
     <Text Include="loadImage.txt" />
     <Text Include="debug.txt" />
+    <Text Include="loadText.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h">

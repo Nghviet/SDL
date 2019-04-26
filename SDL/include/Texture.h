@@ -22,15 +22,23 @@ class Texture
 		int width, height;
 };
 
-class Text
+class TextBox
 {
-	public:
-		Text();
+public:
+	TextBox();
 
-		~Text();
+	~TextBox();
 
-		void free();
+	void free();
 
+	bool load(std::string text, SDL_Color color);
+
+	void render(int x, int y, SDL_Rect* clip, double scale);
+
+private:
+	SDL_Texture *mTexture;
+	int width, height;
+	int x, y;
 };
 
 void drawRect(int x1, int y1, int x2, int y2);

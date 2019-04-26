@@ -6,6 +6,8 @@ bool init();
 
 bool load();
 
+bool loadText();
+
 bool loadDebug();
 
 void close();

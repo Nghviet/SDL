@@ -48,6 +48,12 @@ bool init()
 		return false;
 	}
 
+	gFont = TTF_OpenFont("arial.ttf", 26);
+	if (gFont == NULL)
+	{
+		std::cout << TTF_GetError() << std::endl;
+		return false;
+	}
 
 	return true;
 }
@@ -87,15 +93,21 @@ bool load()
 			gTexture.push_back(tmp);
 			gClip.push_back(t);
 		}
+
+
+		in >> n;
+		while (n--)
+		{
+			std::string t;
+			int r, g, b, a;
+			std::shared_ptr<TextBox> tmp(new TextBox);
+			in >> t >> r >> g >> b >> a;
+			std::cout << "Loaded " << t << " " << r << " " << g << " " << b << " " << a << std::endl;
+			tmp->load(t, { (Uint8)r,(Uint8)g,(Uint8)b ,(Uint8)a });
+			gText.push_back(tmp);
+		}
 	}
 	in.close();
-
-	gFont = TTF_OpenFont("arial.ttf", 26);
-	if (gFont == NULL)
-	{
-		std::cout << TTF_GetError() << std::endl;
-		return false;
-	}
 
 	return true;
 }
@@ -104,7 +116,7 @@ bool loadDebug()
 {
 	std::ifstream in;
 	in.open("debug.txt");
-	if (!in.good()) return 1;
+	if (!in.good()) return false;
 	int n;
 	in >> n;
 	for (int i = 0; i < n; i++)
@@ -118,15 +130,19 @@ bool loadDebug()
 		testing.push_back(tmp);
 	}
 	in.close();
-	return 1;
+	return true;
 }
 
 void close()
 {
-	for (auto i : gTexture) i->free();
+	for (auto &i : gTexture) i->free();
+	for (auto &i : gText) i->free();
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
+	TTF_CloseFont(gFont);
 	gRenderer = NULL;
 	gWindow = NULL;
+	gFont = NULL;
 	SDL_Quit();
+	TTF_Quit();
 }

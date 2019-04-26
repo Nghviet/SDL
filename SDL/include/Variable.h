@@ -16,12 +16,17 @@ typedef std::vector<SDL_Rect> vSDLR;
 extern int sWidth;
 extern int sHeight;
 
+const int UI_TEXT_WIDTH = 100;
+const int UI_TEXT_HEIGHT = 100;
+
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 extern TTF_Font* gFont;
 extern std::vector< std::shared_ptr<Texture> > gTexture;
+extern std::vector< std::shared_ptr<TextBox> > gText;
 extern std::vector<vSDLR> gClip;
-
+extern Uint32 start, end;
+extern SDL_Event e;
 extern Texture tmp;
 
 extern std::vector<ship> listAllied;
@@ -34,6 +39,8 @@ const int BB = 1;
 const int CA = 2;
 
 extern Mouse mouse;
-
+extern Point mousePos;
 extern int UImode;
+
+extern bool quit;
 #endif // !VARIABLE_H_

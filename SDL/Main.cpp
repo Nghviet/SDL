@@ -20,7 +20,6 @@ int main(int argc, char * argv[])
 {
 	if (!init()) return 0;
 	if (!load()) return 0;
-
 	if (!loadDebug()) return 0;
 
 	/*
@@ -35,9 +34,7 @@ int main(int argc, char * argv[])
 	}
 	*/
 	
-	Uint32 start, end;
-	SDL_Event e;
-	while (1)
+	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)
 		{
@@ -46,36 +43,9 @@ int main(int argc, char * argv[])
 				close();
 				return 0;
 			}
-			if (e.type == SDL_KEYDOWN)
-			{
-				switch (e.key.keysym.sym)
-				{
-					case SDLK_w:
-					{
-						for (auto &i : testing) i.movex = min(1, i.movex + 1);
-						break;
-					}
-					case SDLK_s:
-					{
-						for (auto &i : testing) i.movex = max(-1, i.movex - 1);
-						break;
-					}
-					case SDLK_a:
-					{
-						for (auto &i : testing) i.movey = max(-1, i.movey - 1);
-						break;
-					}
-					case SDLK_d:
-					{
-						for (auto &i : testing) i.movey = min(1, i.movey + 1);
-						break;
-					}
-				}
-			}
 		}
 
-		//Mouse handling
-		mouse.update();
+		mainUIControl();
 
 		//Keybroad handling
 		if(1)
@@ -105,44 +75,10 @@ int main(int argc, char * argv[])
 			}
 			
 		}
-		
-		for (auto &i : testing) i.move();
-		
-		
 
-		// Render
-		{
-			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
-			SDL_RenderClear(gRenderer);
-
-			mouse.render();
-			
-			for (auto i : testing)
-			{
-				//	cout << i.chosen << " " << i.x << " " << i.y << endl;
-				if (i.chosen)
-				{
-					gTexture[8]->render(i.cur.x, i.cur.y, NULL, i.scale, i.angle, NULL, SDL_FLIP_NONE);
-				}
-				switch (i.branch)
-				{
-				case BB: {
-					gTexture[2]->render(i.cur.x, i.cur.y, NULL, i.scale, i.angle, NULL, SDL_FLIP_NONE);
-					break;
-				}
-				case CA: {
-					gTexture[3]->render(i.cur.x, i.cur.y, NULL, i.scale, i.angle, NULL, SDL_FLIP_NONE);
-					break;
-				}
-				}
-			}
-
-			//gTexture[0]->render(sWidth / 2, sHeight / 2, NULL, 2, 0, NULL, SDL_FLIP_NONE);
-			
-			SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 0);
-			SDL_RenderPresent(gRenderer);
-		}
 	}
 
+	close();
+	return 0;
 
 }

@@ -1,11 +1,19 @@
-10
+12
 0	UI_BASE							img/UI/UI_ocean.jpg						0 0 0
 1	UI_CONTROL						img/UI/UI_base_control.png				0 0 0
-2	UI_BATTLESHIP_ALLIED			img/UI/UI_Battleship_Allied.png			0 0 0
-3	UI_CRUISER_ALLIED				img/UI/UI_Cruiser_Allied.png			0 0 0
-4	UI_BATTLESHIP_ENEMY				img/UI/UI_Battleship_Enemy.png			0 0 0
-5	UI_CRUISER_ENEMY				img/UI/UI_Cruiser_Enemy.png				0 0 0
-6	UI_BATTLESHIP_DESTROYED			img/UI/UI_Battleship_Destroyed.png		0 0 0
-7	UI_CRUISER_DESTROYED			img/UI/UI_Cruiser_Destroyed.png			0 0 0
-8	UI_CHOOSEN_SHIP					img/UI/UI_choosen_ship.png				0 0 0
-9	UI_MINIMAP						img/UI/UI_Minimap.png					0 0 0
+2	UI_CONTROL_CHOSEN				img/UI/UI_base_chosen.png				0 0 0
+3	UI_BATTLESHIP_ALLIED			img/UI/UI_Battleship_Allied.png			0 0 0
+4	UI_CRUISER_ALLIED				img/UI/UI_Cruiser_Allied.png			0 0 0
+5	UI_BATTLESHIP_ENEMY				img/UI/UI_Battleship_Enemy.png			0 0 0
+6	UI_CRUISER_ENEMY				img/UI/UI_Cruiser_Enemy.png				0 0 0
+7	UI_BATTLESHIP_DESTROYED			img/UI/UI_Battleship_Destroyed.png		0 0 0
+8	UI_CRUISER_DESTROYED			img/UI/UI_Cruiser_Destroyed.png			0 0 0
+9	UI_CHOOSEN_SHIP					img/UI/UI_choosen_ship.png				0 0 0
+10	UI_MINIMAP						img/UI/UI_Minimap.png					0 0 0
+11	UI_YAMATO						ship/Yamato_d.png						0 0 0
+5
+Battle 255 255 255 0
+Resume 255 255 255 0
+Surrender 255 255 255 0
+Option 255 255 255 0
+Exit 255 255 255 0

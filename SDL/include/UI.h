@@ -16,9 +16,6 @@ enum MODE
 	PAUSE
 };
 
-
-std::pair<int, int> renderText(int x,int y,std::string text,SDL_Color);
-
 void mainUIControl();
 
 void loading();
