@@ -31,14 +31,23 @@ public:
 
 	void free();
 
-	bool load(std::string text, SDL_Color color);
+	bool load(std::string text, SDL_Color color,int _link);
 
-	void render(int x, int y, SDL_Rect* clip, double scale);
+	void setLocation(int _x, int _y);
+
+	void update();
+
+	bool action();
+
+	void render(SDL_Rect* clip, double scale);
 
 private:
 	SDL_Texture *mTexture;
 	int width, height;
 	int x, y;
+	int link;
+	bool chosen;
+
 };
 
 void drawRect(int x1, int y1, int x2, int y2);

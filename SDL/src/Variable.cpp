@@ -19,4 +19,9 @@ std::vector< std::shared_ptr<Ship> > controlling;
 
 Mouse mouse;
 Point mousePos;
+
+Ship player;
+
+bool left = false;
+bool right = false;
 bool quit = false;

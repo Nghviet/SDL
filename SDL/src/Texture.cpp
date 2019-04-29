@@ -66,12 +66,19 @@ void Texture::render(int x, int y, SDL_Rect* clip, double scale, double angle, S
 		render.w = clip->w * scale;
 		render.h = clip->h * scale;
 	}
+	if (center == NULL)
+	{
 
-	render.x -= render.w / 2;
-	render.y -= render.h / 2;
+		render.x -= render.w / 2;
+		render.y -= render.h / 2;
+	}
+	else
+	{
+		render.x -= center->x;
+		render.y -= center->y;
+	}
 
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, angle, center, flip);
-
 }
 
 TextBox::TextBox()
@@ -79,6 +86,10 @@ TextBox::TextBox()
 	mTexture = NULL;
 	width = 0;
 	height = 0;
+	x = 0;
+	y = 0;
+	link = -1;
+	chosen = false;
 }
 
 TextBox::~TextBox()
@@ -94,10 +105,14 @@ void TextBox::free()
 		mTexture = NULL;
 		width = 0;
 		height = 0;
+		x = 0;
+		y = 0;
+		link = -1;
+		chosen = false;
 	}
 }
 
-bool TextBox::load(std::string text,SDL_Color color)
+bool TextBox::load(std::string text,SDL_Color color,int _link)
 {
 	free();
 	SDL_Surface* surface = TTF_RenderText_Solid(gFont, text.c_str(), color);
@@ -115,11 +130,19 @@ bool TextBox::load(std::string text,SDL_Color color)
 	width = surface->w;
 	height = surface->h;
 	SDL_FreeSurface(surface);
+	link = _link;
 	return true;
 }
 
-void TextBox::render(int x,int y,SDL_Rect*clip, double scale)
+void TextBox::setLocation(int _x, int _y)
 {
+	x = _x;
+	y = _y;
+}
+
+void TextBox::render(SDL_Rect*clip, double scale)
+{
+	update();
 	SDL_Rect render = { x,y,0,0 };
 	if (clip == NULL)
 	{
@@ -135,7 +158,29 @@ void TextBox::render(int x,int y,SDL_Rect*clip, double scale)
 	render.x -= render.w / 2;
 	render.y -= render.h / 2;
 
+	if (chosen) gTexture[2]->render(x, y, NULL, scale, 0, NULL, SDL_FLIP_NONE);
+	else gTexture[1]->render(x, y, NULL, scale, 0, NULL, SDL_FLIP_NONE);
+
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, 0, NULL, SDL_FLIP_NONE);
+}
+
+void TextBox::update()
+{
+	if (mousePos.x >= x - 200 && mousePos.x <= x + 200 &&
+		mousePos.y >= y - 50 && mousePos.y <= y + 50)
+	{
+		chosen = true;
+	}
+	else
+	{
+		chosen = false;
+	}
+}
+
+bool TextBox::action()
+{
+	if (chosen&&left) return true;
+	else return false;
 }
 
 void drawRect(int x1, int y1, int x2, int y2)

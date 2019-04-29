@@ -45,10 +45,8 @@ Ship::Ship()
 	acceleration = 1;
 }
 
-Ship::Ship(Point _cur, int _width, int _height, double _scale, double _angle, int _branch)
+Ship::Ship( int _width, int _height, double _scale, double _angle, int _branch)
 {
-	cur = _cur;
-	des = Point();
 	width = _width;
 	height = _height;
 	scale = _scale;
@@ -177,6 +175,29 @@ void Ship::move()
 	return;
 }
 
+void Ship::link(std::shared_ptr<Texture> _hull, std::shared_ptr<Texture> _turret, std::shared_ptr<Texture> _2nd)
+{
+	angleTur[0] = 0;
+	angleTur[1] = 0;
+	angleTur[2] = 180;
+
+	disTur[0] = 305;
+	disTur[1] = 177;
+	disTur[2] = -370;
+
+	hull = _hull;
+	turret = _turret;
+	covered = _2nd;
+}
+
+void Ship::render()
+{
+	hull->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
+	for (int i = 0; i < 3; i++)	turret->render(cur.x + disTur[i] * cos(angle*M_PI / 180), cur.y + disTur[i] * sin(angle*M_PI / 180), NULL, scale, angle + angleTur[i], new SDL_Point{ 70,50 }, SDL_FLIP_NONE);
+	covered->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
+//	new SDL_Point{ 70,50 }
+}
+
 Mouse::Mouse()
 {
 	x1 = -1;
@@ -189,20 +210,32 @@ Mouse::Mouse()
 void Mouse::update()
 {
 	Uint32 mouseState = SDL_GetMouseState(&xt, &yt);
+
+	if(0)
 	if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) leftclick = true;
 	else leftclick = false;
 
+	if(0)
 	if (mouseState&SDL_BUTTON(SDL_BUTTON_RIGHT)) rightclick = true;
 	else rightclick = false;
-	
-	mousePos = Point(xt, yt);
 
+	mousePos = Point(xt, yt);
 	return;
 }
 
 Point Mouse::getLocation()
 {
 	return Point(xt, yt);
+}
+
+void Mouse::left()
+{
+	leftclick = true;
+}
+
+void Mouse::right()
+{
+	rightclick = true;
 }
 
 bool Mouse::leftClick()

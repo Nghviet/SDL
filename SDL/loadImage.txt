@@ -1,4 +1,4 @@
-12
+﻿15
 0	UI_BASE							img/UI/UI_ocean.jpg						0 0 0
 1	UI_CONTROL						img/UI/UI_base_control.png				0 0 0
 2	UI_CONTROL_CHOSEN				img/UI/UI_base_chosen.png				0 0 0
@@ -11,9 +11,6 @@
 9	UI_CHOOSEN_SHIP					img/UI/UI_choosen_ship.png				0 0 0
 10	UI_MINIMAP						img/UI/UI_Minimap.png					0 0 0
 11	UI_YAMATO						ship/Yamato_d.png						0 0 0
-5
-Battle 255 255 255 0
-Resume 255 255 255 0
-Surrender 255 255 255 0
-Option 255 255 255 0
-Exit 255 255 255 0
+12	UI_HULL_TEMP					ship/temp.png							0 0 0
+13	UI_TURRET_TEMP					ship/temp1.png							0 0 0
+14	UI_SECONDARY_TEMP				ship/temp2.png							0 0 0

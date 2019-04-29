@@ -7,14 +7,7 @@
 #include<string>
 #include<SDL.h>
 #include<utility>
-enum MODE
-{
-	LOADING,
-	MAIN_MENU,
-	OPTION,
-	BATTLE,
-	PAUSE
-};
+
 
 void mainUIControl();
 

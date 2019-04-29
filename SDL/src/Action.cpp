@@ -6,6 +6,8 @@
 
 #include <fstream>
 #include <iostream>
+
+
 bool init()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -58,7 +60,7 @@ bool init()
 	return true;
 }
 
-bool load()
+bool load(void *data)
 {
 	std::ifstream in;
 	in.open("loadImage.txt", std::fstream::in);
@@ -71,6 +73,7 @@ bool load()
 	{
 		int n;
 		in >> n;
+		std::cout << n << std::endl;
 		while (n--)
 		{
 			// Order of render - name - path - number of frame(1 if static) - width(horizontal)(perframe) - height(vertical)(perframe)
@@ -95,24 +98,37 @@ bool load()
 		}
 
 
-		in >> n;
-		while (n--)
-		{
-			std::string t;
-			int r, g, b, a;
-			std::shared_ptr<TextBox> tmp(new TextBox);
-			in >> t >> r >> g >> b >> a;
-			std::cout << "Loaded " << t << " " << r << " " << g << " " << b << " " << a << std::endl;
-			tmp->load(t, { (Uint8)r,(Uint8)g,(Uint8)b ,(Uint8)a });
-			gText.push_back(tmp);
-		}
+
 	}
 	in.close();
 
 	return true;
 }
 
-bool loadDebug()
+bool loadText(void* data)
+{
+	std::ifstream in;
+	in.open("loadText.txt", std::fstream::in);
+	if (!in.good()) return false;
+	int n;
+	in >> n;
+	while (n--)
+	{
+		std::string t;
+		int r, g, b, a,link;
+		std::shared_ptr<TextBox> tmp(new TextBox);
+		in >> t >> r >> g >> b >> a >> link;
+		std::cout << "Loaded " << t << " " << r << " " << g << " " << b << " " << a << std::endl;
+		tmp->load(t, { (Uint8)r,(Uint8)g,(Uint8)b ,(Uint8)a },link);
+		gText.push_back(tmp);
+	}
+
+	in.close();
+	return true;
+
+}
+
+bool loadDebug(void* data)
 {
 	std::ifstream in;
 	in.open("debug.txt");
@@ -126,11 +142,19 @@ bool loadDebug()
 		double scale,angle;
 		in >> x >> y >> angle >> type >> scale;
 		std::cout << x << " " << y << " " << angle << " " << type << " " << scale << std::endl;
-		Ship tmp = Ship(Point(x, y), 100 * scale, 50 * scale, scale, angle, type);
-		testing.push_back(tmp);
+//		Ship tmp = Ship(Point(x, y), 100 * scale, 50 * scale, scale, angle, type);
+//		testing.push_back(tmp);
 	}
 	in.close();
 	return true;
+}
+
+void set()
+{
+	gText[BATTLE]->setLocation(sWidth / 2, sHeight / 8 - 50);
+	gText[SURRENDER]->setLocation(sWidth / 2, sHeight / 8);
+	gText[RESUME]->setLocation(sWidth / 2, sHeight / 8 + 150);
+	gText[OPTION]->setLocation(sWidth / 2, sHeight / 8 + 300);
 }
 
 void close()

@@ -4,11 +4,13 @@
 
 bool init();
 
-bool load();
+bool load(void* data);
 
-bool loadText();
+bool loadText(void* data);
 
-bool loadDebug();
+bool loadDebug(void* data);
+
+void set();
 
 void close();
 

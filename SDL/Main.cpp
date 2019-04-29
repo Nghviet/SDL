@@ -19,9 +19,10 @@ vector<Point> rec;
 int main(int argc, char * argv[])
 {
 	if (!init()) return 0;
-	if (!load()) return 0;
-	if (!loadDebug()) return 0;
-
+	if (!load(NULL)) return 0;
+	if (!loadText(NULL)) return 0;
+//	if (!loadDebug(NULL)) return 0;
+	set();
 	/*
 	if (loadRen.joinable()) loadRen.join();
 	while (fSignal.wait_for(std::chrono::milliseconds(1000)) == std::future_status::timeout)
@@ -33,7 +34,10 @@ int main(int argc, char * argv[])
 		SDL_Delay(1000);
 	}
 	*/
-	
+
+	cout << gTexture.size() << endl;
+
+	if(0)
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)

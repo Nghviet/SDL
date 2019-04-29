@@ -1,6 +1,6 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
-
+#include"Texture.h"
 #include<SDL.h>
 #include<math.h>
 #include<vector>
@@ -32,8 +32,7 @@ struct Ship
 
 	Ship();
 
-	Ship(Point _cur,
-			 int _width, int _height,
+	Ship( int _width, int _height,
 			 double _scale, double _angle, int _branch);
 	
 	void init(int _x, int _y);
@@ -50,6 +49,14 @@ struct Ship
 	double maxForwardSpeed;
 	double maxBackwardSpeed;
 	double acceleration;
+
+	std::shared_ptr<Texture> hull, turret;
+	std::shared_ptr < Texture> covered;
+	double angleTur[3];
+	int disTur[3];
+	void link(std::shared_ptr<Texture> _hull, std::shared_ptr<Texture>_turret,std::shared_ptr<Texture> _2nd);
+	void render();
+	void update();
 };
 
 class Mouse
@@ -61,6 +68,10 @@ class Mouse
 		void update();
 
 		Point getLocation();
+
+		void left();
+
+		void right();
 
 		bool leftClick();
 

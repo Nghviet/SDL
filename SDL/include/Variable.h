@@ -42,5 +42,21 @@ extern Mouse mouse;
 extern Point mousePos;
 extern int UImode;
 
+extern Ship player;
+
+extern bool left;
+extern bool right;
+
 extern bool quit;
+
+enum MODE
+{
+	BATTLE,
+	RESUME,
+	SURRENDER,
+	OPTION,
+	PAUSE,
+	MAIN_MENU
+};
+
 #endif // !VARIABLE_H_
