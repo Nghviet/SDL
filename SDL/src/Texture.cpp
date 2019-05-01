@@ -81,6 +81,16 @@ void Texture::render(int x, int y, SDL_Rect* clip, double scale, double angle, S
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &render, angle, center, flip);
 }
 
+int Texture::rWidth()
+{
+	return width;
+}
+
+int Texture::rHeight()
+{
+	return height;
+}
+
 TextBox::TextBox()
 {
 	mTexture = NULL;

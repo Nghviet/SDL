@@ -8,11 +8,17 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="txt">
+      <UniqueIdentifier>{676de29c-7a76-4268-ad6b-66b0c2520081}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="loadImage.txt" />
     <Text Include="debug.txt" />
     <Text Include="loadText.txt" />
+    <Text Include="txt\yamato.txt">
+      <Filter>txt</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h">

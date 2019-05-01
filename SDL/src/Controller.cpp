@@ -1,8 +1,8 @@
 #include"../include/Controller.h"
 #include"../include/Variable.h"
-
+#include"../include/Texture.h"
 #include<iostream>
-
+#include<fstream>
 Point::Point()
 {
 	x = -1;
@@ -77,6 +77,7 @@ void Ship::init(int _x, int _y)
 	maxForwardSpeed = 50;
 	maxBackwardSpeed = -5;
 	acceleration = 5;
+	rotation = 10;
 }
 
 void Ship::setDestination(Point _des)
@@ -175,27 +176,134 @@ void Ship::move()
 	return;
 }
 
-void Ship::link(std::shared_ptr<Texture> _hull, std::shared_ptr<Texture> _turret, std::shared_ptr<Texture> _2nd)
+void Ship::resize(double newScale)
 {
-	angleTur[0] = 0;
-	angleTur[1] = 0;
-	angleTur[2] = 180;
+	scale = newScale;
+}
 
-	disTur[0] = 305;
-	disTur[1] = 177;
-	disTur[2] = -370;
+void Ship::load(std::string text)
+{
+	std::ifstream in;
+	in.open("txt/" + text);
+	if (!in.good()) return;
+	std::string path1, path2, path3;
+	in >> path1  >> path3;
+	{
+		std::shared_ptr<Texture> tmp(new Texture);
+		tmp->load(path1);
+		hull = tmp; 
+	}
+	{
+		std::shared_ptr<Texture> tmp(new Texture);
+		tmp->load(path3);
+		cover = tmp;
+	}
+	std::cout << path1 << std::endl << path3 << std::endl;
+	int n;//number of turret
+	in >> n;
+	while(n--)
+	{
+		int dis,angle, layer, cX, cY;
+		std::string path;
+		in >> dis >> angle >> layer >> path >> cX >> cY;
+		std::cout << dis << " " << angle << " " << layer << " " << path << " " << cX << " " << cY << std::endl;
+		turret.push_back(Turret(dis, angle, cX, cY, path));
+	}
 
-	hull = _hull;
-	turret = _turret;
-	covered = _2nd;
+	scale = 1;
+	width = hull->rWidth();
+	height = hull->rHeight();
+	angle = 0;
+	branch = 0;
+	
+	cur.x = sWidth / 2;
+	cur.y = sHeight / 2;
+
+	return;
+}
+
+void Ship::update()
+{
+	for (auto &i : turret)
+	{
+		i.x = cur.x + i.dis*cos(angle *change)*scale;
+		i.y = cur.y + i.dis*sin(angle *change)*scale;
+		i.aim(angle);
+	}
 }
 
 void Ship::render()
 {
 	hull->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
-	for (int i = 0; i < 3; i++)	turret->render(cur.x + disTur[i] * cos(angle*M_PI / 180), cur.y + disTur[i] * sin(angle*M_PI / 180), NULL, scale, angle + angleTur[i], new SDL_Point{ 70,50 }, SDL_FLIP_NONE);
-	covered->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
-//	new SDL_Point{ 70,50 }
+	for (auto i : turret) i.render(angle,scale);
+	cover->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
+}
+
+Turret::Turret()
+{
+	x = 0;
+	y = 0;
+	dis = 0;
+	angle = 0;
+	rotate = 0;
+	limit = 150;
+	cX = 0;
+	cY = 0;
+	speed = 10;
+	mTexture = NULL;
+	center = NULL;
+}
+
+void Turret::aim(double sAngle)
+{
+	double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
+	int cur = SDL_GetTicks();
+	double time = (double)(cur - start) / 1000;
+	a = a / change;
+	a-=  sAngle + angle;
+	while (a > 360) a -= 360;
+	while (a < 0) a += 360;
+	if (a > 180) a = a - 360;
+
+	if (rotate > a) rotate -= time * speed;
+	else rotate += time * speed;
+
+	if (rotate > limit) rotate = limit;
+	if (rotate < -limit) rotate = -limit;
+
+	start = cur;
+}
+
+Turret::Turret(int _dis, double _angle, int _cX, int _cY, std::string path)
+{
+	dis = _dis;
+	angle = _angle;
+	rotate = 0;
+	speed = 10;
+	limit = 150;
+	cX = _cX;
+	cY = _cY;
+	center = new SDL_Point{ cX,cY };
+	std::shared_ptr<Texture> tmp(new Texture);
+	tmp->load(path);
+	layer = 1;
+	mTexture = tmp;
+	start = SDL_GetTicks();
+}
+
+void Turret::render(double sAngle,double scale)
+{
+	int tX, tY;
+	tX = cX * scale;
+	tY = cY * scale;
+	center->x = tX;
+	center->y = tY;
+	mTexture->render(x, y, NULL, scale, angle + sAngle + rotate, center, SDL_FLIP_NONE);
+}
+
+void Turret::fire(double sAngle)
+{
+	
 }
 
 Mouse::Mouse()

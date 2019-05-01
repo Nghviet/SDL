@@ -34,10 +34,7 @@ void loading()
 
 void main_menu()
 {
-	player = Ship(1505, 236, 1, 0, 0);
-	player.link(gTexture[12],gTexture[13],gTexture[14]);
 	player.init(sWidth / 2, sHeight / 2);
-
 	while (!quit)
 	{
 		left = false;
@@ -61,50 +58,14 @@ void main_menu()
 						break;
 				}
 			}
-
-			if (e.type == SDL_KEYDOWN)
-			{
-				switch (e.key.keysym.sym)
-				{
-					case SDLK_UP: 
-						player.angle += 10;
-						break;
-					case SDLK_DOWN:
-						player.angle -= 10;
-						break;
-					case SDLK_RIGHT:
-						player.angleTur[0] += 10;
-						break;
-					case SDLK_LEFT:
-						player.angleTur[0] -= 10;
-						break;
-
-					case SDLK_w:
-						player.angleTur[1] += 10;
-						break;
-
-					case SDLK_s:
-						player.angleTur[1] -= 10;
-						break;
-
-					case SDLK_e:
-						player.angleTur[2] += 10;
-						break;
-
-					case SDLK_d:
-						player.angleTur[2] -= 10;
-						break;
-
-				}
-
-			}
-
 		}
 
 		SDL_RenderClear(gRenderer);
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
 		
-		mouse.update();	
+		mouse.update();
+		player.update();
+		
 		player.render();
 
 		gText[BATTLE]->render(NULL, 2);
@@ -121,6 +82,7 @@ void main_menu()
 void battle()
 {
 	player.init(480, 540);
+	player.resize(0.1);
 	Point tmp;
 	bool pause = false;
 	bool option = false;
@@ -140,24 +102,30 @@ void battle()
 			{
 				switch (e.key.keysym.sym)
 				{
-					case SDLK_w:
+					case SDLK_UP:
 					{
-						if (!pause) for (auto &i : testing) i.movex = std::min(1, i.movex + 1);
+						if (!pause) player.movex = std::min(1, player.movex + 1);
+					//	std::cout << player.movex << std::endl;
 						break;
 					}
-					case SDLK_s:
+					case SDLK_DOWN:
 					{
-						if (!pause) for (auto &i : testing) i.movex = std::max(-1, i.movex - 1);
+						if (!pause) player.movex = std::max(-1, player.movex - 1);
+					//	std::cout << player.movex << std::endl;
 						break;
 					}
-					case SDLK_a:
+					case SDLK_LEFT:
 					{
-						if (!pause) for (auto &i : testing) i.movey = std::max(-1, i.movey - 1);
+						if (!pause) player.movey = std::max(-1, player.movey - 1);
+					//	std::cout << player.movey << std::endl;
+					//	std::cout << "left" << std::endl;
 						break;
 					}
-					case SDLK_d:
+					case SDLK_RIGHT:
 					{
-						if (!pause) for (auto &i : testing) i.movey = std::min(1, i.movey + 1);
+						if (!pause) player.movey = std::min(1, player.movey + 1);
+					//	std::cout << player.movey << std::endl;
+					//	std::cout << "right" << std::endl;
 						break;
 					}
 					case SDLK_ESCAPE:
@@ -167,37 +135,35 @@ void battle()
 					}
 				}
 			}
-		}
-
-		mouse.update();
-		
-		SDL_RenderClear(gRenderer);
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
-		if (!pause)
-		{
-			for (auto &i : testing) i.move();
-
-		}
-		/*
-		for (auto i : testing)
+			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				//	cout << i.chosen << " " << i.x << " " << i.y << endl;
-				switch (i.branch)
+				switch (e.button.button)
 				{
-				case BB: {
-					gTexture[3]->render(i.cur.x, i.cur.y, NULL, i.scale, i.angle, NULL, SDL_FLIP_NONE);
+				case SDL_BUTTON_LEFT:
+					left = true;
 					break;
-				}
-				case CA: {
-					gTexture[4]->render(i.cur.x, i.cur.y, NULL, i.scale, i.angle, NULL, SDL_FLIP_NONE);
+				case SDL_BUTTON_RIGHT:
+					right = true;
 					break;
-				}
 				}
 			}
-		*/
+		}
+		
+		mouse.update();
+		player.update();
+		SDL_RenderClear(gRenderer);
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
+
+		if (!pause) 
+		{ 
+			player.move(); 
+		}
+		player.render();
 
 		if(pause)
 		{
+			player.current = SDL_GetTicks();
+
 			gText[RESUME]->render(NULL, 2);
 			gText[SURRENDER]->render(NULL, 2);
 			gText[OPTION]->render(NULL, 2);
@@ -206,11 +172,13 @@ void battle()
 			{
 				pause = false;
 			}
-			if (1)
+			if (gText[SURRENDER]->action())
 			{
-
+				UImode = MAIN_MENU;
+				return;
 			}
 		}
+
 
 
 		SDL_RenderPresent(gRenderer);

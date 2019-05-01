@@ -5,6 +5,8 @@
 #include<math.h>
 #include<vector>
 
+const double change = M_PI / 180;
+
 struct Point
 {
 	double x, y;
@@ -16,6 +18,28 @@ struct Point
 };
 
 bool operator == (const Point&x, const Point &y);
+
+struct Turret
+{
+	int x, y;
+	int dis;
+	int layer;
+	double angle;
+	double rotate;
+	double speed;
+	double limit;
+	int cX, cY;
+	SDL_Point* center;
+	std::shared_ptr<Texture> mTexture;
+
+	unsigned int start;
+
+	Turret();
+
+	Turret(int _dis, double _angle, int _cX, int _cY, std::string path);
+	void render(double sAngle,double scale);
+	void aim(double sAngle);
+};
 
 struct Ship
 {
@@ -50,14 +74,21 @@ struct Ship
 	double maxBackwardSpeed;
 	double acceleration;
 
-	std::shared_ptr<Texture> hull, turret;
-	std::shared_ptr < Texture> covered;
-	double angleTur[3];
-	int disTur[3];
-	void link(std::shared_ptr<Texture> _hull, std::shared_ptr<Texture>_turret,std::shared_ptr<Texture> _2nd);
-	void render();
+	double angleTur[10];
+	int disTur[10];
+	int cX, cY;
+
+	std::vector<Turret> turret;
+	std::shared_ptr<Texture> hull,cover;
+	void init2();
 	void update();
+	void render();
+	void resize(double newScale);
+	
+	void load(std::string text);
+
 };
+
 
 class Mouse
 {

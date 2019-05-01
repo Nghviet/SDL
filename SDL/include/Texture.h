@@ -17,6 +17,10 @@ class Texture
 
 		void render(int x, int y, SDL_Rect* clip, double scale, double angle, SDL_Point* center, SDL_RendererFlip flip);
 
+		int rWidth();
+
+		int rHeight();
+
 	private:
 		SDL_Texture* mTexture;
 		int width, height;

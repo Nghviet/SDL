@@ -1,4 +1,4 @@
-﻿15
+11
 0	UI_BASE							img/UI/UI_ocean.jpg						0 0 0
 1	UI_CONTROL						img/UI/UI_base_control.png				0 0 0
 2	UI_CONTROL_CHOSEN				img/UI/UI_base_chosen.png				0 0 0
@@ -10,7 +10,3 @@
 8	UI_CRUISER_DESTROYED			img/UI/UI_Cruiser_Destroyed.png			0 0 0
 9	UI_CHOOSEN_SHIP					img/UI/UI_choosen_ship.png				0 0 0
 10	UI_MINIMAP						img/UI/UI_Minimap.png					0 0 0
-11	UI_YAMATO						ship/Yamato_d.png						0 0 0
-12	UI_HULL_TEMP					ship/temp.png							0 0 0
-13	UI_TURRET_TEMP					ship/temp1.png							0 0 0
-14	UI_SECONDARY_TEMP				ship/temp2.png							0 0 0

@@ -73,7 +73,6 @@ bool load(void *data)
 	{
 		int n;
 		in >> n;
-		std::cout << n << std::endl;
 		while (n--)
 		{
 			// Order of render - name - path - number of frame(1 if static) - width(horizontal)(perframe) - height(vertical)(perframe)

@@ -34,10 +34,9 @@ int main(int argc, char * argv[])
 		SDL_Delay(1000);
 	}
 	*/
+	 
+	player.load("yamato.txt");
 
-	cout << gTexture.size() << endl;
-
-	if(0)
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)

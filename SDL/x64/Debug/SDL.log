@@ -1,2 +1,8 @@
-﻿  Action.cpp
+﻿  Controller.cpp
+l:\sdl\sdl\src\controller.cpp(229): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\controller.cpp(230): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\controller.cpp(237): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\controller.cpp(239): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\controller.cpp(298): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\controller.cpp(299): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   SDL.vcxproj -> L:\SDL\x64\Debug\SDL.exe
