@@ -19,15 +19,15 @@
     <Text Include="txt\yamato.txt">
       <Filter>txt</Filter>
     </Text>
+    <Text Include="txt\takao.txt">
+      <Filter>txt</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Controller.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ship.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Texture.h">
@@ -40,9 +40,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Variable.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Header.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

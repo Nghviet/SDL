@@ -78,6 +78,16 @@ void Ship::init(int _x, int _y)
 	maxBackwardSpeed = -5;
 	acceleration = 5;
 	rotation = 10;
+	for (auto &i : turret)
+	{
+		i.start = SDL_GetTicks();
+		i.fireT = 0;
+		i.fired = 0;
+		i.move = 1;
+		i.xD = -1;
+		i.yD = -1;
+		i.rotate = 0;
+	}
 }
 
 void Ship::setDestination(Point _des)
@@ -193,23 +203,12 @@ void Ship::load(std::string text)
 		tmp->load(path1);
 		hull = tmp; 
 	}
+	if (path3.size() > 1)
 	{
 		std::shared_ptr<Texture> tmp(new Texture);
 		tmp->load(path3);
 		cover = tmp;
 	}
-	std::cout << path1 << std::endl << path3 << std::endl;
-	int n;//number of turret
-	in >> n;
-	while(n--)
-	{
-		int dis,angle, layer, cX, cY;
-		std::string path;
-		in >> dis >> angle >> layer >> path >> cX >> cY;
-		std::cout << dis << " " << angle << " " << layer << " " << path << " " << cX << " " << cY << std::endl;
-		turret.push_back(Turret(dis, angle, cX, cY, path));
-	}
-
 	scale = 1;
 	width = hull->rWidth();
 	height = hull->rHeight();
@@ -219,24 +218,77 @@ void Ship::load(std::string text)
 	cur.x = sWidth / 2;
 	cur.y = sHeight / 2;
 
+	int n;//number of turret
+
+	std::vector< std::pair<int, double> > battery;
+
+	in >> n;
+	while (n--)
+	{
+		int dis;
+		double angle;
+		in >> dis >> angle;
+		battery.push_back(std::pair<int, double>(dis, angle));
+	}
+
+	in >> n;
+	while (n--)
+	{
+		int dis, angle, layer, cX, cY;
+		std::string path;
+		in >> dis >> angle >> layer >> path >> cX >> cY;
+		std::cout << dis << " " << angle << " " << layer << " " << path << " " << cX << " " << cY << std::endl;
+		turret.push_back(Turret(dis, angle, cX, cY, path,NULL,NULL,battery));
+	}
+
 	return;
+}
+
+void Ship::link()
+{
+	for (auto &i : turret)
+	{
+		i.sAngle = &angle;
+		i.sScale = &scale;
+	}
 }
 
 void Ship::update()
 {
+	if(1)
 	for (auto &i : turret)
 	{
 		i.x = cur.x + i.dis*cos(angle *change)*scale;
 		i.y = cur.y + i.dis*sin(angle *change)*scale;
-		i.aim(angle);
+		i.aim();
+		if (left || i.fired) 
+		{
+//			std::cout << "Fired" << std::endl;
+
+			i.fire();
+		}
+//		std::cout << i.fireT << std::endl;
 	}
+
+	if (0)
+	{
+		turret[1].x = cur.x + turret[1].dis*cos(angle *change)*scale;
+		turret[1].y = cur.y + turret[1].dis*sin(angle *change)*scale;
+		if (!turret[1].fired) turret[1].aim();
+		if (left || turret[1].fired)
+		{
+			turret[1].fire();
+		}
+	}
+
 }
 
 void Ship::render()
 {
 	hull->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
-	for (auto i : turret) i.render(angle,scale);
-	cover->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
+	for (auto i : turret) i.render();
+//	turret[1].render();
+	if(cover!=NULL) cover->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
 }
 
 Turret::Turret()
@@ -249,32 +301,56 @@ Turret::Turret()
 	limit = 150;
 	cX = 0;
 	cY = 0;
-	speed = 10;
+	speed = 30;
 	mTexture = NULL;
 	center = NULL;
+	sScale = NULL;
+	sAngle = NULL;
 }
 
-void Turret::aim(double sAngle)
+void Turret::aim()
 {
-	double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
-	int cur = SDL_GetTicks();
-	double time = (double)(cur - start) / 1000;
-	a = a / change;
-	a-=  sAngle + angle;
-	while (a > 360) a -= 360;
-	while (a < 0) a += 360;
-	if (a > 180) a = a - 360;
+	if (!fired)
+	{
+		double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
+		int cur = SDL_GetTicks();
+		double time = (double)(cur - start) / 1000;
+		a = a / change;
+		a -= *sAngle + angle;
+		while (a > 360) a -= 360;
+		while (a < 0) a += 360;
+		if (a > 180) a = a - 360;
 
-	if (rotate > a) rotate -= time * speed;
-	else rotate += time * speed;
+		if (rotate > a) rotate -= time * speed;
+		else rotate += time * speed;
 
-	if (rotate > limit) rotate = limit;
-	if (rotate < -limit) rotate = -limit;
+		if (rotate > limit) rotate = limit;
+		if (rotate < -limit) rotate = -limit;
 
-	start = cur;
+		start = cur;
+	}
+	else
+	{
+		double a = std::atan2(-(y - yD), -(x - xD));
+		int cur = SDL_GetTicks();
+		double time = (double)(cur - start) / 1000;
+		a = a / change;
+		a -= *sAngle + angle;
+		while (a > 360) a -= 360;
+		while (a < 0) a += 360;
+		if (a > 180) a = a - 360;
+
+		if (rotate > a) rotate -= time * speed;
+		else rotate += time * speed;
+
+		if (rotate > limit) rotate = limit;
+		if (rotate < -limit) rotate = -limit;
+
+		start = cur;
+	}
 }
 
-Turret::Turret(int _dis, double _angle, int _cX, int _cY, std::string path)
+Turret::Turret(int _dis, double _angle,int _cX, int _cY,std::string path,double *_sAngle, double *_sScale, std::vector< std::pair<int, double> > _battery)
 {
 	dis = _dis;
 	angle = _angle;
@@ -289,29 +365,186 @@ Turret::Turret(int _dis, double _angle, int _cX, int _cY, std::string path)
 	layer = 1;
 	mTexture = tmp;
 	start = SDL_GetTicks();
+	fireT = 0;
+	fired = false;
+	sAngle = _sAngle;
+	sScale = _sScale;
+	battery = _battery;
+//	std::cout << *sAngle <<" "<<*sScale<<" "<<angle<< std::endl;
 }
 
-void Turret::render(double sAngle,double scale)
+void Turret::render()
 {
 	int tX, tY;
-	tX = cX * scale;
-	tY = cY * scale;
+	tX = cX * *sScale;
+	tY = cY * *sScale;
 	center->x = tX;
 	center->y = tY;
-	mTexture->render(x, y, NULL, scale, angle + sAngle + rotate, center, SDL_FLIP_NONE);
+	mTexture->render(x, y, NULL, *sScale, angle + *sAngle + rotate, center, SDL_FLIP_NONE);
+	if (!fired)
+	{
+		double t = (angle + rotate + *sAngle)*change;
+		double d = 1e9 + 7;
+		if (cos(t) < 0)
+		{
+			if (-x < d*cos(t)) d = (double)-x / cos(t);
+		}
+		if (cos(t) > 0)
+		{
+			if ((sWidth - x) < d*cos(t)) d = (double)(sWidth - x) / cos(t);
+		}
+		if (sin(t) < 0)
+		{
+			if (-y < d*sin(t)) d = (double)-y / sin(t);
+		}
+		if (cos(t) > 0)
+		{
+			if ((sHeight - y) < d*sin(t)) d = (double)(sWidth - y) / sin(t);
+		}
+
+		double xT = x + d * cos(t);
+		double yT = y + d * sin(t);
+
+		t = (angle + rotate + *sAngle + 90)*change;
+
+		for (int i = -0; i < 1; i++)
+		{
+			int xS = x + i * cos(t);
+			int yS = y + i * sin(t);
+			int xE = xT + i * cos(t);
+			int yE = yT + i * sin(t);
+			//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
+			SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 0);
+			SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+		}
+	}
+	
 }
 
-void Turret::fire(double sAngle)
+void Turret::fire()
 {
+	double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
 	
+	if (fireT > Flimit)
+	{
+		fireT = 0;
+		start = SDL_GetTicks();
+		fired = false;
+		return;
+	}
+
+	if (!fired)
+	{
+		a = a / change;
+		std::cout << a << " " << angle + rotate + *sAngle << std::endl;
+		if (abs(a - (angle + rotate + *sAngle)) < 2 || abs(a + 360 - (angle + rotate + *sAngle)) < 2)
+		{
+			fired = true;
+			firing = SDL_GetTicks();
+			fireT = 0;
+			a = angle + rotate + *sAngle; 
+			double temp = a;
+			
+				double t = temp * change;
+				double d = 1e9+7;
+				if (cos(t) < 0)
+				{
+					if (-x < d*cos(t)) d = (double)-x / cos(t);
+				}
+				if (cos(t) > 0)
+				{
+					if ((sWidth - x) < d*cos(t)) d = (double)(sWidth - x) / cos(t);
+				}
+				if (sin(t) < 0)
+				{
+					if (-y < d*sin(t)) d = (double)-y / sin(t);
+				}
+				if (cos(t) > 0)
+				{
+					if ((sHeight - y) < d*sin(t)) d = (double)(sWidth - y) / sin(t);
+				}
+				
+
+
+				xD = x + d * cos(t);
+				yD = y + d * sin(t);
+				std::cout << sin(t) << " " << cos(t) << " " << xD << " " << yD << std::endl;
+			a = (a + 90)*change;
+			for (auto j : battery)
+			{
+				int xB = x + j.first*cos((j.second + temp) * change) * *sScale;
+				int yB = y + j.first*sin((j.second + temp) * change) * *sScale;
+
+				double t = a * change;
+				double dis = 0;
+
+
+				std::cout << xB << " " << yB << std::endl;
+				SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 0);
+				SDL_RenderDrawPoint(gRenderer, xB, yB);
+
+				
+
+				for (int i = -1; i < 1; i++)
+				{
+					int xS = xB + i * cos(a);
+					int yS = yB + i * sin(a);
+					int xE = xD + i * cos(a);
+					int yE = yD + i * sin(a);
+				//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
+					SDL_SetRenderDrawColor(gRenderer, 0, 255, 255, 0);
+					SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+				}
+			}
+		}
+//		std::cout << "Fired " << firing << " " << fired << std::endl;
+	}
+	else
+	{
+		a = angle + rotate + *sAngle;
+		int temp = a;
+		a = (a + 90)*change;
+		for (auto j : battery)
+		{
+			int xB = x + j.first*cos((j.second + temp) * change) * *sScale;
+			int yB = y + j.first*sin((j.second + temp) * change) * *sScale;
+
+			for (int i = -1; i < 1; i++)
+			{
+				
+				int xS = xB + i * cos(a);
+				int yS = yB + i * sin(a);
+				int xE = xD + i * cos(a);
+				int yE = yD + i * sin(a);
+			//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
+				SDL_SetRenderDrawColor(gRenderer, 0, 255, 255, 0);
+				SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+			}
+		}
+		int cur = SDL_GetTicks();
+		fireT += cur - firing;
+		firing = cur;
+	}
+}
+
+void Turret::testing()
+{
+	battery[0].first = 100;
+	battery[0].second = -10;
+
+	battery[1].first = 100;
+	battery[1].second = 0;
+
+	battery[2].first = 100;
+	battery[2].second = 10;
 }
 
 Mouse::Mouse()
 {
-	x1 = -1;
-	y1 = -1;
-	x2 = -1;
-	y2 = -1;
+	x1 = 1;
+	y1 = 1;
+	x2 = 1;
+	y2 = 1;
 	mode = POINT;
 }
 

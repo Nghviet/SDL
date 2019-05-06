@@ -22,13 +22,12 @@
     <Text Include="debug.txt" />
     <Text Include="loadImage.txt" />
     <Text Include="loadText.txt" />
+    <Text Include="txt\takao.txt" />
     <Text Include="txt\yamato.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\Controller.h" />
-    <ClInclude Include="include\Header.h" />
-    <ClInclude Include="include\Ship.h" />
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\Thread.h" />
     <ClInclude Include="include\UI.h" />

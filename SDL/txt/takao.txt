@@ -1,0 +1,12 @@
+ship/base_hull.png
+1
+2
+50 -10
+50 10
+5
+420 180 1 ship/base_turret1.png 54 31
+583 0 1 ship/base_turret1.png 54 31
+-526 180 1 ship/base_turret1.png 54 31
+501 0 1 ship/base_turret2.png 54 35
+-441 180 1 ship/base_turret2.png 54 35
+0.05

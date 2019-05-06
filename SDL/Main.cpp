@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
 	*/
 	 
 	player.load("yamato.txt");
-
+	player.link();
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)

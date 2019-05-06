@@ -28,17 +28,38 @@ struct Turret
 	double rotate;
 	double speed;
 	double limit;
-	int cX, cY;
+	int cX, cY; ;
+	double *sScale, *sAngle;
+	int *LCD;
 	SDL_Point* center;
 	std::shared_ptr<Texture> mTexture;
 
 	unsigned int start;
+	unsigned int firing;
+	unsigned int cd;
+
+	bool fired;
+	bool move;
+	Point tar;
+
+
+	int fireT; 
+	int xD, yD;
 
 	Turret();
 
-	Turret(int _dis, double _angle, int _cX, int _cY, std::string path);
-	void render(double sAngle,double scale);
-	void aim(double sAngle);
+	Turret(int _dis, double _angle, 
+		int _cX, int _cY, 
+		std::string path,
+		double *sAngle,double *sScale,
+		std::vector< std::pair<int, double> > _battery);
+
+	std::vector< std::pair<int, double> > battery;
+	void testing();
+
+	void render();
+	void aim();
+	void fire();
 };
 
 struct Ship
@@ -80,13 +101,12 @@ struct Ship
 
 	std::vector<Turret> turret;
 	std::shared_ptr<Texture> hull,cover;
-	void init2();
 	void update();
 	void render();
 	void resize(double newScale);
 	
 	void load(std::string text);
-
+	void link();
 };
 
 

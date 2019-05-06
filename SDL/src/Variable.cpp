@@ -1,3 +1,4 @@
+
 #include "../include/Variable.h"
 
 int sWidth = 1600;
@@ -25,3 +26,4 @@ Ship player;
 bool left = false;
 bool right = false;
 bool quit = false;
+

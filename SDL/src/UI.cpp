@@ -34,7 +34,9 @@ void loading()
 
 void main_menu()
 {
+
 	player.init(sWidth / 2, sHeight / 2);
+	player.resize(1);
 	while (!quit)
 	{
 		left = false;
@@ -60,13 +62,13 @@ void main_menu()
 			}
 		}
 
-		SDL_RenderClear(gRenderer);
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
+		SDL_RenderClear(gRenderer);
 		
 		mouse.update();
 		player.update();
-		
 		player.render();
+//		if (player.turret[0].fired || player.turret[1].fired || player.turret[2].fired)std::cout << "Fired" << std::endl;
 
 		gText[BATTLE]->render(NULL, 2);
 		if (gText[BATTLE]->action())
@@ -82,7 +84,7 @@ void main_menu()
 void battle()
 {
 	player.init(480, 540);
-	player.resize(0.1);
+	player.resize(0.08);
 	Point tmp;
 	bool pause = false;
 	bool option = false;
@@ -150,14 +152,14 @@ void battle()
 		}
 		
 		mouse.update();
-		player.update();
-		SDL_RenderClear(gRenderer);
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
 
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
+		SDL_RenderClear(gRenderer);
 		if (!pause) 
 		{ 
 			player.move(); 
 		}
+		player.update();
 		player.render();
 
 		if(pause)

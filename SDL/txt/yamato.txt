@@ -1,6 +1,10 @@
 ship/temp.png
 ship/temp2.png
 3
+100 -10
+100 0
+100 10
+3
 305 0 1 ship/temp1.png 70 50
 177 0 1 ship/temp1.png 70 50
 -370 180 1 ship/temp1.png 70 50

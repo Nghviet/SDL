@@ -49,6 +49,8 @@ extern bool right;
 
 extern bool quit;
 
+const int Flimit = 3000;
+
 enum MODE
 {
 	BATTLE,
