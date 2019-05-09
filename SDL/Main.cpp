@@ -37,6 +37,9 @@ int main(int argc, char * argv[])
 	 
 	player.load("yamato.txt");
 	player.link();
+	bot.load("yamato.txt");
+	bot.link();
+	std::cout << player.HP << std::endl;
 	while (!quit)
 	{
 		while (SDL_PollEvent(&e) != 0)
@@ -56,8 +59,7 @@ int main(int argc, char * argv[])
 			const Uint8 *state = SDL_GetKeyboardState(NULL);
 			if (state[SDL_SCANCODE_ESCAPE])
 			{
-				for (auto &i : testing) i.chosen = false;
-				while (!controlling.empty()) controlling.pop_back();
+
 			}
 			if (state[SDL_SCANCODE_W])
 			{

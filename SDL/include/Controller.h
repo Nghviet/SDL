@@ -38,8 +38,11 @@ struct Turret
 	unsigned int firing;
 	unsigned int cd;
 
+	int cdL;
+
 	bool fired;
 	bool move;
+	bool allow;
 	Point tar;
 
 
@@ -52,7 +55,8 @@ struct Turret
 		int _cX, int _cY, 
 		std::string path,
 		double *sAngle,double *sScale,
-		std::vector< std::pair<int, double> > _battery);
+		std::vector< std::pair<int, double> > _battery,
+		int _cdL);
 
 	std::vector< std::pair<int, double> > battery;
 	void testing();
@@ -60,6 +64,11 @@ struct Turret
 	void render();
 	void aim();
 	void fire();
+
+	//
+	void botAim();
+
+	void botFire();
 };
 
 struct Ship
@@ -77,10 +86,11 @@ struct Ship
 
 	Ship();
 
-	Ship( int _width, int _height,
-			 double _scale, double _angle, int _branch);
+	Ship(int _width, int _height,
+		double _scale, double _angle, int _branch,
+		int HP);
 	
-	void init(int _x, int _y);
+	void init(int _x, int _y,double _angle);
 
 	void setDestination(Point _des);
 
@@ -107,7 +117,20 @@ struct Ship
 	
 	void load(std::string text);
 	void link();
+
+	std::vector< std::pair<int, double> > border;
+	std::vector<Point> outer;
+	int HP;
+	int maxHP;
+
+	bool death;
+
+	void outerUpdate();
+
+	//Bot system
+	void botUpdate();
 };
+
 
 
 class Mouse

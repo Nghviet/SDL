@@ -3,4 +3,4 @@ Battle 255 255 255 0 0
 Resume 255 255 255 0 1
 Surrender 255 255 255 0 2
 Option 255 255 255 0 3
-Exit 255 255 255 0 -1
+Return 255 255 255 0 4

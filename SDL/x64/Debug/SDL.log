@@ -1,29 +1,6 @@
-﻿  Controller.cpp
-l:\sdl\sdl\src\controller.cpp(261): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(262): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(275): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(276): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(288): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(291): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(379): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(380): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(412): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(413): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(414): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(415): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(469): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(470): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(475): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(476): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(490): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(491): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(492): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(493): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(505): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(509): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(510): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(515): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(516): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(517): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-l:\sdl\sdl\src\controller.cpp(518): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+﻿  UI.cpp
+l:\sdl\sdl\src\ui.cpp(222): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+l:\sdl\sdl\src\ui.cpp(222): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+l:\sdl\sdl\src\ui.cpp(223): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+l:\sdl\sdl\src\ui.cpp(223): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   SDL.vcxproj -> L:\SDL\x64\Debug\SDL.exe

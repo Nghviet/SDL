@@ -16,7 +16,9 @@ Uint32 start, end;
 SDL_Event e;
 
 std::vector<Ship> testing;
-std::vector< std::shared_ptr<Ship> > controlling;
+//std::vector< std::shared_ptr<Ship> > bot;
+
+Ship bot;
 
 Mouse mouse;
 Point mousePos;

@@ -33,8 +33,9 @@ extern std::vector<ship> listAllied;
 extern std::vector<ship> listEnemy;
 
 extern std::vector<Ship> testing;
-extern std::vector< std::shared_ptr<Ship> > controlling;
+//extern std::vector< std::shared_ptr<Ship> > bot;
 extern std::vector<std::shared_ptr<Texture> > temp;
+extern Ship bot;
 const int BB = 1;
 const int CA = 2;
 
@@ -49,8 +50,8 @@ extern bool right;
 
 extern bool quit;
 
-const int Flimit = 3000;
-
+const int Flimit = 1000;
+const int damage = 3000;
 enum MODE
 {
 	BATTLE,

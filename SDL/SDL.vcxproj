@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h" />
+    <ClInclude Include="include\Bot.h" />
     <ClInclude Include="include\Controller.h" />
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\Thread.h" />
@@ -36,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\Bot.cpp" />
     <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Thread.cpp" />

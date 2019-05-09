@@ -3,6 +3,58 @@
 #include"../include/Texture.h"
 #include<iostream>
 #include<fstream>
+#include<cmath>
+
+bool onSegment(Point p, Point q, Point r)
+{
+	if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+		q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
+		return true;
+
+	return false;
+}
+
+
+int orientation(Point p, Point q, Point r)
+{
+
+	int val = (q.y - p.y) * (r.x - q.x) -
+		(q.x - p.x) * (r.y - q.y);
+
+	if (val == 0) return 0;  // colinear 
+
+	return (val > 0) ? 1 : 2; // clock or counterclock wise 
+}
+
+bool cross(Point p1, Point q1, Point p2, Point q2)
+{
+	// Find the four orientations needed for general and 
+	// special cases 
+	int o1 = orientation(p1, q1, p2);
+	int o2 = orientation(p1, q1, q2);
+	int o3 = orientation(p2, q2, p1);
+	int o4 = orientation(p2, q2, q1);
+
+	// General case 
+	if (o1 != o2 && o3 != o4)
+		return true;
+
+	// Special Cases 
+	// p1, q1 and p2 are colinear and p2 lies on segment p1q1 
+	if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+	// p1, q1 and q2 are colinear and q2 lies on segment p1q1 
+	if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+	// p2, q2 and p1 are colinear and p1 lies on segment p2q2 
+	if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+	// p2, q2 and q1 are colinear and q1 lies on segment p2q2 
+	if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+	return false; // Doesn't fall in any of the above cases 
+}
+
 Point::Point()
 {
 	x = -1;
@@ -45,7 +97,7 @@ Ship::Ship()
 	acceleration = 1;
 }
 
-Ship::Ship( int _width, int _height, double _scale, double _angle, int _branch)
+Ship::Ship( int _width, int _height, double _scale, double _angle, int _branch,int _HP)
 {
 	width = _width;
 	height = _height;
@@ -59,6 +111,8 @@ Ship::Ship( int _width, int _height, double _scale, double _angle, int _branch)
 	velocity = 0;
 	rotation = 5;
 
+	HP = _HP;
+
 	movex = 0;
 	movey = 0;
 	maxForwardSpeed = 50;
@@ -66,7 +120,7 @@ Ship::Ship( int _width, int _height, double _scale, double _angle, int _branch)
 	acceleration = 5;
 }
 
-void Ship::init(int _x, int _y)
+void Ship::init(int _x, int _y,double _angle)
 {
 	cur.x = _x;
 	cur.y = _y;
@@ -74,10 +128,11 @@ void Ship::init(int _x, int _y)
 	movey = 0;
 	velocity = 0;
 	angle = 0;
-	maxForwardSpeed = 50;
+	maxForwardSpeed = 20;
 	maxBackwardSpeed = -5;
 	acceleration = 5;
 	rotation = 10;
+	angle = _angle;
 	for (auto &i : turret)
 	{
 		i.start = SDL_GetTicks();
@@ -87,6 +142,7 @@ void Ship::init(int _x, int _y)
 		i.xD = -1;
 		i.yD = -1;
 		i.rotate = 0;
+		i.allow = false;
 	}
 }
 
@@ -103,13 +159,13 @@ void Ship::move()
 
 	if (movey!=0)
 	{
-		maxForwardSpeed = 45;
-		maxBackwardSpeed = -4;
+		maxForwardSpeed = 20;
+		maxBackwardSpeed = -3;
 	}
 	else
 	{
-		maxForwardSpeed = 50;
-		maxBackwardSpeed = -5;
+		maxForwardSpeed = 15;
+		maxBackwardSpeed = -2;
 	}
 
 	switch (movex)
@@ -118,7 +174,7 @@ void Ship::move()
 		{
 			if (velocity == maxBackwardSpeed) distance = velocity * time;
 			velocity -= acceleration * time;
-			if (velocity > maxBackwardSpeed) velocity = maxBackwardSpeed;
+			if (velocity < maxBackwardSpeed) velocity = maxBackwardSpeed;
 			break;
 		}
 		case 0:
@@ -214,10 +270,11 @@ void Ship::load(std::string text)
 	height = hull->rHeight();
 	angle = 0;
 	branch = 0;
-	
+	int cd;
+	in >> HP >> cd;
 	cur.x = sWidth / 2;
 	cur.y = sHeight / 2;
-
+	death = false;
 	int n;//number of turret
 
 	std::vector< std::pair<int, double> > battery;
@@ -238,9 +295,20 @@ void Ship::load(std::string text)
 		std::string path;
 		in >> dis >> angle >> layer >> path >> cX >> cY;
 		std::cout << dis << " " << angle << " " << layer << " " << path << " " << cX << " " << cY << std::endl;
-		turret.push_back(Turret(dis, angle, cX, cY, path,NULL,NULL,battery));
+		turret.push_back(Turret(dis, angle, cX, cY, path,NULL,NULL,battery,cd));
 	}
-
+	
+	in >> n;
+	while (n--)
+	{
+		int dis;
+		double angle;
+		in >> dis >> angle;
+		border.push_back(std::pair<int,double>(dis, angle*change));
+	}
+	maxHP = HP;
+	velocity = 8;
+	rotation = 5;
 	return;
 }
 
@@ -261,13 +329,20 @@ void Ship::update()
 		i.x = cur.x + i.dis*cos(angle *change)*scale;
 		i.y = cur.y + i.dis*sin(angle *change)*scale;
 		i.aim();
-		if (left || i.fired) 
+		if ((left || i.fired) && i.allow)
 		{
 //			std::cout << "Fired" << std::endl;
 
 			i.fire();
 		}
 //		std::cout << i.fireT << std::endl;
+	}
+	outer.clear();
+	for (auto i : border)
+	{
+		int x = cur.x + i.first*cos(angle*change + i.second)*scale;
+		int y = cur.y + i.first*sin(angle*change + i.second)*scale;
+		outer.push_back(Point(x, y));
 	}
 
 	if (0)
@@ -289,6 +364,16 @@ void Ship::render()
 	for (auto i : turret) i.render();
 //	turret[1].render();
 	if(cover!=NULL) cover->render(cur.x, cur.y, NULL, scale, angle, NULL, SDL_FLIP_NONE);
+	
+	if (0)
+	{
+		SDL_SetRenderDrawColor(gRenderer, 0, 255, 255, 0);
+		for (auto i : outer)
+		{
+			SDL_Rect temp = { i.x - 10,i.y - 10,20,20 };
+			SDL_RenderFillRect(gRenderer, &temp);
+		}
+	}
 }
 
 Turret::Turret()
@@ -310,10 +395,10 @@ Turret::Turret()
 
 void Turret::aim()
 {
+	int cur = SDL_GetTicks();
 	if (!fired)
 	{
 		double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
-		int cur = SDL_GetTicks();
 		double time = (double)(cur - start) / 1000;
 		a = a / change;
 		a -= *sAngle + angle;
@@ -326,36 +411,24 @@ void Turret::aim()
 
 		if (rotate > limit) rotate = limit;
 		if (rotate < -limit) rotate = -limit;
-
-		start = cur;
 	}
-	else
+
+
+	if (!allow)
 	{
-		double a = std::atan2(-(y - yD), -(x - xD));
-		int cur = SDL_GetTicks();
-		double time = (double)(cur - start) / 1000;
-		a = a / change;
-		a -= *sAngle + angle;
-		while (a > 360) a -= 360;
-		while (a < 0) a += 360;
-		if (a > 180) a = a - 360;
-
-		if (rotate > a) rotate -= time * speed;
-		else rotate += time * speed;
-
-		if (rotate > limit) rotate = limit;
-		if (rotate < -limit) rotate = -limit;
-
-		start = cur;
+		cd += cur - start;
+		if (cd >= cdL*1000) allow = true;
 	}
+
+	start = cur;
 }
 
-Turret::Turret(int _dis, double _angle,int _cX, int _cY,std::string path,double *_sAngle, double *_sScale, std::vector< std::pair<int, double> > _battery)
+Turret::Turret(int _dis, double _angle,int _cX, int _cY,std::string path,double *_sAngle, double *_sScale, std::vector< std::pair<int, double> > _battery,int _cdL)
 {
 	dis = _dis;
 	angle = _angle;
 	rotate = 0;
-	speed = 10;
+	speed = 15;
 	limit = 150;
 	cX = _cX;
 	cY = _cY;
@@ -370,6 +443,9 @@ Turret::Turret(int _dis, double _angle,int _cX, int _cY,std::string path,double 
 	sAngle = _sAngle;
 	sScale = _sScale;
 	battery = _battery;
+	allow = true;
+	cd = 0;
+	cdL = _cdL;
 //	std::cout << *sAngle <<" "<<*sScale<<" "<<angle<< std::endl;
 }
 
@@ -424,19 +500,38 @@ void Turret::render()
 void Turret::fire()
 {
 	double a = std::atan2(-(y - mousePos.y), -(x - mousePos.x));
-	
+//	tracj.clear();
 	if (fireT > Flimit)
 	{
 		fireT = 0;
 		start = SDL_GetTicks();
 		fired = false;
+		allow = false;
+		cd = 0;
+		int hit = 0;
+		a = (angle + rotate + * sAngle);
+		for (auto i : battery)
+		{
+			int xB = x + i.first*cos((i.second + a) * change) * *sScale;
+			int yB = y + i.first*sin((i.second + a) * change) * *sScale;
+			Point t1(xB, yB), t2(xD, yD);
+			for (int i = 0; i < bot.outer.size(); i++)
+			{
+				if (cross(bot.outer[i], bot.outer[(i + 1) % bot.outer.size()], t1, t2))
+					hit++;
+				break;
+			}
+		}
+
+		bot.HP -= hit * damage;
+		std::cout << bot.HP << std::endl;
 		return;
 	}
 
 	if (!fired)
 	{
 		a = a / change;
-		std::cout << a << " " << angle + rotate + *sAngle << std::endl;
+	//	std::cout << a << " " << angle + rotate + *sAngle << std::endl;
 		if (abs(a - (angle + rotate + *sAngle)) < 2 || abs(a + 360 - (angle + rotate + *sAngle)) < 2)
 		{
 			fired = true;
@@ -464,26 +559,18 @@ void Turret::fire()
 					if ((sHeight - y) < d*sin(t)) d = (double)(sWidth - y) / sin(t);
 				}
 				
-
-
 				xD = x + d * cos(t);
 				yD = y + d * sin(t);
-				std::cout << sin(t) << " " << cos(t) << " " << xD << " " << yD << std::endl;
+		//		std::cout << sin(t) << " " << cos(t) << " " << xD << " " << yD << std::endl;
 			a = (a + 90)*change;
 			for (auto j : battery)
 			{
 				int xB = x + j.first*cos((j.second + temp) * change) * *sScale;
 				int yB = y + j.first*sin((j.second + temp) * change) * *sScale;
 
-				double t = a * change;
-				double dis = 0;
-
-
-				std::cout << xB << " " << yB << std::endl;
+			//	std::cout << xB << " " << yB << std::endl;
 				SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 0);
-				SDL_RenderDrawPoint(gRenderer, xB, yB);
-
-				
+			//	SDL_RenderDrawPoint(gRenderer, xB, yB);
 
 				for (int i = -1; i < 1; i++)
 				{
@@ -493,7 +580,7 @@ void Turret::fire()
 					int yE = yD + i * sin(a);
 				//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
 					SDL_SetRenderDrawColor(gRenderer, 0, 255, 255, 0);
-					SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+			//		SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
 				}
 			}
 		}
@@ -597,4 +684,194 @@ void Mouse::render()
 		drawRect(x1, y1, x2, y2);
 	}
 	return;
+}
+
+void Ship::botUpdate()
+{
+	for (auto &i : turret)
+	{
+		i.x = cur.x + i.dis*cos(angle *change)*scale;
+		i.y = cur.y + i.dis*sin(angle *change)*scale;
+		i.botAim();
+		if (i.fired || i.allow)
+		{
+			//			std::cout << "Fired" << std::endl;
+
+			i.botFire();
+		}
+		//		std::cout << i.fireT << std::endl;
+	}
+	
+
+	double a = atan2(-player.cur.y + cur.y, -player.cur.x + cur.x)/change;
+	movey = 0;
+	if (a < 0) a += 360;
+	if (angle < 0) angle += 360;
+	if (a < angle) movey = 1;
+	if (a > angle) movey = -1;
+	//std::cout << a << std::endl;
+	movex = 1;
+	move();
+	for (auto i : turret) i.botAim();
+}
+
+void Turret::botAim()
+{
+	int cur = SDL_GetTicks();
+	if (!fired)
+	{
+		double a = std::atan2(-(y - player.cur.y), -(x - player.cur.x));
+		if (player.velocity < 0) a = std::atan2(-(y - player.cur.y + player.width*sin(player.angle*change)* player.scale), -(x - player.cur.x + player.width*cos(player.angle*change)* player.scale));
+		if (player.velocity > 0) a = std::atan2(-(y - player.cur.y - player.width*sin(player.angle*change)* player.scale), -(x - player.cur.x - player.width*cos(player.angle*change)* player.scale));
+		double time = (double)(cur - start) / 1000;
+		a = a / change;
+		a -= *sAngle + angle;
+		while (a > 360) a -= 360;
+		while (a < 0) a += 360;
+		if (a > 180) a = a - 360;
+
+		if (rotate > a) rotate -= time * speed;
+		else rotate += time * speed;
+
+		if (rotate > limit) rotate = limit;
+		if (rotate < -limit) rotate = -limit;
+	}
+
+
+	if (!allow)
+	{
+		cd += cur - start;
+		if (cd >= cdL * 1000) allow = true;
+	}
+
+	start = cur;
+}
+
+void Turret::botFire()
+{
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 0);
+	double a = std::atan2(-(y - player.cur.y), -(x - player.cur.x));
+	if (player.velocity < 0) a = std::atan2(-(y - player.cur.y ), -(x - player.cur.x ));
+	if (player.velocity > 0) a = std::atan2(-(y - player.cur.y ), -(x - player.cur.x ));
+		//	tracj.clear();
+		if (fireT > Flimit)
+		{
+			fireT = 0;
+			start = SDL_GetTicks();
+			fired = false;
+			allow = false;
+			cd = 0;
+			int hit = 0;
+			a = (angle + rotate + *sAngle);
+			for (auto i : battery)
+			{
+				int xB = x + i.first*cos((i.second + a) * change) * *sScale;
+				int yB = y + i.first*sin((i.second + a) * change) * *sScale;
+				Point t1(xB, yB), t2(xD, yD);
+				for (int i = 0; i < player.outer.size(); i++)
+				{
+					if (cross(player.outer[i], player.outer[(i + 1) % player.outer.size()], t1, t2))
+						hit++;
+					break;
+				}
+			}
+
+			player.HP -= hit * damage;
+			std::cout << player.HP << std::endl;
+			//std::cout << bot.HP << std::endl;
+			return;
+		}
+
+		if (!fired)
+		{
+			a = a / change;
+		//	std::cout << a << " " << angle + rotate + *sAngle << std::endl;
+			if (abs(a - (angle + rotate + *sAngle)) < 2 || abs(a + 360 - (angle + rotate + *sAngle)) < 2)
+			{
+				fired = true;
+				firing = SDL_GetTicks();
+				fireT = 0;
+				a = angle + rotate + *sAngle;
+				double temp = a;
+
+				double t = temp * change;
+				double d = 1e9 + 7;
+				if (cos(t) < 0)
+				{
+					if (-x < d*cos(t)) d = (double)-x / cos(t);
+				}
+				if (cos(t) > 0)
+				{
+					if ((sWidth - x) < d*cos(t)) d = (double)(sWidth - x) / cos(t);
+				}
+				if (sin(t) < 0)
+				{
+					if (-y < d*sin(t)) d = (double)-y / sin(t);
+				}
+				if (cos(t) > 0)
+				{
+					if ((sHeight - y) < d*sin(t)) d = (double)(sWidth - y) / sin(t);
+				}
+
+				xD = x + d * cos(t);
+				yD = y + d * sin(t);
+			//	std::cout << sin(t) << " " << cos(t) << " " << xD << " " << yD << std::endl;
+				a = (a + 90)*change;
+				for (auto j : battery)
+				{
+					int xB = x + j.first*cos((j.second + temp) * change) * *sScale;
+					int yB = y + j.first*sin((j.second + temp) * change) * *sScale;
+
+				//	std::cout << xB << " " << yB << std::endl;
+					//	SDL_RenderDrawPoint(gRenderer, xB, yB);
+
+					for (int i = -1; i < 1; i++)
+					{
+						int xS = xB + i * cos(a);
+						int yS = yB + i * sin(a);
+						int xE = xD + i * cos(a);
+						int yE = yD + i * sin(a);
+						//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
+						SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+					}
+				}
+			}
+			//		std::cout << "Fired " << firing << " " << fired << std::endl;
+		}
+		else
+		{
+			a = angle + rotate + *sAngle;
+			int temp = a;
+			a = (a + 90)*change;
+			for (auto j : battery)
+			{
+				int xB = x + j.first*cos((j.second + temp) * change) * *sScale;
+				int yB = y + j.first*sin((j.second + temp) * change) * *sScale;
+
+				for (int i = -1; i < 1; i++)
+				{
+
+					int xS = xB + i * cos(a);
+					int yS = yB + i * sin(a);
+					int xE = xD + i * cos(a);
+					int yE = yD + i * sin(a);
+					//	std::cout << xS << " " << yS << " " << xE << " " << yE << std::endl;
+					SDL_RenderDrawLine(gRenderer, xS, yS, xE, yE);
+				}
+			}
+			int cur = SDL_GetTicks();
+			fireT += cur - firing;
+			firing = cur;
+		}
+}
+
+void Ship::outerUpdate()
+{
+	outer.clear();
+	for (auto i : border)
+	{
+		int x = cur.x + i.first*cos(angle*change + i.second)*scale;
+		int y = cur.y + i.first*sin(angle*change + i.second)*scale;
+		outer.push_back(Point(x, y));
+	}
 }

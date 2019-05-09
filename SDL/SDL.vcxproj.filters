@@ -42,6 +42,9 @@
     <ClInclude Include="include\Variable.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Bot.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Action.cpp">
@@ -63,5 +66,6 @@
     <ClCompile Include="src\UI.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Bot.cpp" />
   </ItemGroup>
 </Project>
